@@ -4,64 +4,87 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    [Header("Set Dymically")]
+    [Header("Dymically Set")]
     public int x;
     public int y;
-    public int tileNUM;
-    BoxCollider COL;
+    public int tileNum;
+    public char collisionChar;
+    public bool ChangeTile;
+
+    private BoxCollider bColl;
 
 
     void Awake()
     {
-        COL = GetComponent<BoxCollider>();    
+        bColl = GetComponent<BoxCollider>();        
+
     }
 
-    public void SetTile(int eX,int eY,int tileNum = -1) 
+    void Update()
     {
-        x = eX;
-        y = eY;
+        if (ChangeTile) 
+        {
+            ChangeDirectly();
+        }
+    }
+
+    public void SetTile(int ex,int ey,int etileNum = -1) 
+    {
+        x = ex;
+        y = ey;
 
         transform.localPosition = new Vector3(x, y, 0);
-        gameObject.name = x.ToString("D3") + "x" + y.ToString("D3");
+        gameObject.name = x.ToString("D3") + "x"+y.ToString("D3");
 
-        if (tileNum == -1) 
+        if (etileNum == -1)
         {
-            tileNUM = TileCamera.GET_MAP(x, y);
+            etileNum = TileCamera.Get_Map(x, y);
         }
-        GetComponent<SpriteRenderer>().sprite = TileCamera.SPRITES[tileNUM];
+        else 
+        {
+            TileCamera.Set_Map(x, y, etileNum);
+        }
+        tileNum = etileNum;
+
+        GetComponent<SpriteRenderer>().sprite = TileCamera.SPRITES[tileNum];
+
         SetCollider();
     }
 
     void SetCollider() 
     {
-        char c = TileCamera.CollisionText[tileNUM];
-        COL.enabled = true;
+        //´ÓDeleverCollisionµ¼³öÅö×²ÐÅÏ¢
+        bColl.enabled = true;
 
-        switch (c) 
+        collisionChar = TileCamera.COLLISIONS[tileNum];
+        switch (collisionChar) 
         {
-            //¶¥²¿Åö×²
-            case 'W':
-                COL.center = new Vector3(0, 0.25f, 0);
-                COL.size = new Vector3(1, 0.5f, 1);
+            case 'S'://ÍêÈ«Åö×²
+                bColl.center = Vector3.zero;
+                bColl.size = Vector3.one;
                 break;
-            //ÍêÈ«Åö×²
-            case 'S':
-                COL.center = Vector3.zero;
-                COL.size = Vector3.one;
+            case 'W'://¶¥²¿Åö×²
+                bColl.center = new Vector3(0, 0.25f, 0);
+                bColl.size = new Vector3(1, 0.5f, 1);
                 break;
-            //×óÅö×²
-            case 'A':
-                COL.center = new Vector3(-0.25f, 0, 0);
-                COL.size = new Vector3(0.5f, 1, 1);
+            case 'A'://×óÅö×²
+                bColl.center = new Vector3(-0.5f, 0, 0);
+                bColl.size = new Vector3(0.5f, 1, 1);
                 break;
-            //ÓÒÅö×²
-            case 'D':
-                COL.center = new Vector3(0.25f, 0, 0);
-                COL.size = new Vector3(0.5f, 1, 1);
+            case 'D'://ÓÒÅö×²
+                bColl.center = new Vector3(0.5f, 0, 0);
+                bColl.size = new Vector3(0.5f, 1, 1);
                 break;
             default:
-                COL.enabled = false;
-                break;
+                bColl.enabled = false;
+                break;                
         }
+    }
+
+    void ChangeDirectly() 
+    {
+        Vector2 curPos = transform.position;
+        SetTile((int)curPos.x, (int)curPos.y, tileNum);
+        ChangeTile = false;
     }
 }

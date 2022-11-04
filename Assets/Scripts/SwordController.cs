@@ -4,60 +4,58 @@ using UnityEngine;
 
 public class SwordController : MonoBehaviour
 {
-    public TONY tony;
-    public GameObject sword;
-    public SpriteRenderer swordRenderer;
-    public Vector3[] swordPos;
+    public Tony tony;
+    public GameObject sword;    
+    public Transform Right;
+    public Transform Up;
+    public Transform Left;
+    public Transform Down;
 
-    // Start is called before the first frame update
+    private SpriteRenderer swordSR;
+
     void Start()
     {
-        swordPos = new Vector3[4];
-        tony = GetComponentInParent<TONY>();
+        tony = GetComponentInParent<Tony>();
         sword = transform.Find("Sword").gameObject;
-        swordRenderer = sword.GetComponent<SpriteRenderer>();
+        Right = transform.Find("Right");
+        Up = transform.Find("Up");
+        Left = transform.Find("Left");
+        Down = transform.Find("Down");
+        swordSR = sword.GetComponent<SpriteRenderer>();
         sword.SetActive(false);
-        
     }
 
-    // Update is called once per frame
     void Update()
     {
-        swordPos[0] = GameObject.Find("Right").transform.position;
-        swordPos[1] = GameObject.Find("Up").transform.position;
-        swordPos[2] = GameObject.Find("Left").transform.position;
-        swordPos[3] = GameObject.Find("Down").transform.position;
-        //transform.rotation = Quaternion.Euler(0, 0, 90 * tony.facing);
-
+        sword.SetActive(tony.mode == tMode.attack);
         switch (tony.facing) 
         {
             case 0:
-                sword.transform.position = swordPos[0];
-                sword.transform.rotation = Quaternion.Euler(0, 0, 0);
-                swordRenderer.flipY = false;
-                swordRenderer.sortingOrder = 2;
+                swordSR.sortingOrder = 2;
+                sword.transform.rotation = Quaternion.Euler(0, 0, tony.facing * 90);
+                sword.transform.localPosition = Right.localPosition;
+                //swordSR.flipX = false;
                 break;
             case 1:
-                sword.transform.position = swordPos[1];
-                sword.transform.rotation = Quaternion.Euler(0, 0, 90);
-                swordRenderer.flipY = false;
-                swordRenderer.sortingOrder = 0;
+                swordSR.sortingOrder = 0;
+                sword.transform.rotation = Quaternion.Euler(0, 0, tony.facing * 90);
+                sword.transform.localPosition = Up.localPosition;
                 break;
             case 2:
-                sword.transform.position = swordPos[2];
-                sword.transform.rotation = Quaternion.Euler(0, 0, 180);
-                swordRenderer.flipY = true;
-                swordRenderer.sortingOrder = 2;
+                swordSR.sortingOrder = 2;
+                sword.transform.rotation = Quaternion.Euler(0, 0, tony.facing * 90);
+                sword.transform.localPosition = Left.localPosition;
+                //swordSR.flipX = true;
                 break;
             case 3:
-                sword.transform.position = swordPos[3];
-                sword.transform.rotation = Quaternion.Euler(0, 0, 270);
-                swordRenderer.flipY = true;
-                swordRenderer.sortingOrder = 2;
+                swordSR.sortingOrder = 2;
+                sword.transform.rotation = Quaternion.Euler(0, 0, tony.facing * 90);
+                sword.transform.localPosition = Down.localPosition;
                 break;
         }
 
-
-        sword.SetActive(tony.tonyState == TonyState.attack);        
+        //transform.rotation = Quaternion.Euler(0, 0, tony.facing*90);
+        //T.transform.rotation = Quaternion.Euler(0, 0, tony.facing * 90);
+        //Debug.Log(T.transform.position);
     }
 }

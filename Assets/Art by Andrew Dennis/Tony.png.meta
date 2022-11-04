@@ -4,40 +4,40 @@ TextureImporter:
   internalIDToNameTable:
   - first:
       213: 21300000
-    second: Dray_Walk_0a
+    second: Tony_Walk_0a
   - first:
       213: 21300002
-    second: Dray_Walk_1a
+    second: Tony_Walk_1a
   - first:
       213: 21300004
-    second: Dray_Walk_2a
+    second: Tony_Walk_2a
   - first:
       213: 21300006
-    second: Dray_Walk_3a
+    second: Tony_Walk_3a
   - first:
       213: 21300008
-    second: Dray_Walk_0b
+    second: Tony_Walk_0b
   - first:
       213: 21300010
-    second: Dray_Walk_1b
+    second: Tony_Walk_1b
   - first:
       213: 21300012
-    second: Dray_Walk_2b
+    second: Tony_Walk_2b
   - first:
       213: 21300014
-    second: Dray_Walk_3b
+    second: Tony_Walk_3b
   - first:
       213: 21300016
-    second: Dray_Attack_0
+    second: Tony_Attack_0
   - first:
       213: 21300018
-    second: Dray_Attack_1
+    second: Tony_Attack_1
   - first:
       213: 21300020
-    second: Dray_Attack_2
+    second: Tony_Attack_2
   - first:
       213: 21300022
-    second: Dray_Attack_3
+    second: Tony_Attack_3
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -418,7 +418,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 6258d3b6e4c6c8c4ea5cd333ec133de2
+    spriteID: b92c07cf72cf3ec44af41aedd37a49fd
     internalID: 0
     vertices: []
     indices: 

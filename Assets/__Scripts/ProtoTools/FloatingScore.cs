@@ -68,7 +68,7 @@ public class FloatingScore : MonoBehaviour {
     }
 
     public void FSCallback(FloatingScore fs) {
-        // When this callback is called by SendMessage,
+        // When this callback is called by SendMessage,daa
         //   add the score from the calling FloatingScore
         score += fs.score;
     }

@@ -5,117 +5,122 @@ using UnityEngine;
 public class TileCamera : MonoBehaviour
 {
     static private int W, H;
-    static private int[,] MAP;
+    static private int[,] MAP_Info;
+
+    static public Transform tileAnchor;
     static public Sprite[] SPRITES;
-    static public Transform TileAnchor;
-    static public Tile[,] TILES;
-    static public string CollisionText;
+    static public Tile[,] Tiles;
+    static public string COLLISIONS;
 
     [Header("Set In Inspector")]
     public TextAsset mapInfos;
-    public Texture2D mapPNG;
-    public Tile tilePrefab;
+    public Texture2D mapSpritePNG;
     public TextAsset mapCollision;
+    public Tile TilePrefab;
+    
 
 
 
     void Awake()
     {
-        CollisionText = Utils.RemoveLineEndings(mapCollision.text);
+        COLLISIONS = Utils.RemoveLineEndings(mapCollision.text);
+        //COLLISIONS is ___WWWWWWWWWWWWWSSSS_SSS_SS__S_S_SSSSSSS_SSSSSS__SSSADSSSSSSADS_SSS_AD_SSSSS__SSSSSSADSSSSSSADSS_S____________S_SS____________SS_S____________S_SS____________SSSSSSSSSSSSSSSSSSSSS__SSS_SS__S_S________________________________________________________________
+        //int i = Utils.GetStringCount(COLLISIONS);
+        //Debug.Log(i);
 
-        Debug.Log(CollisionText.Length);
-        LoadMap();    
+        Load_Map();
     }
 
-    public void LoadMap() 
+    public void Load_Map() 
     {
-        GameObject anchor = new GameObject("anchor");
-        TileAnchor = anchor.transform;
-
-        SPRITES = Resources.LoadAll<Sprite>(mapPNG.name);
-
         string[] lines = mapInfos.text.Split('\n');
+        //66
         H = lines.Length;
-        string[] tileNums = lines[0].Split(' ');
-        W = tileNums.Length;
 
+        string[] tiles = lines[0].Split(' ');
+        //96
+        W = tiles.Length;
+
+        GameObject ANCHOR = new GameObject("TileAnchor");
+        tileAnchor = ANCHOR.transform;
+
+        SPRITES = Resources.LoadAll<Sprite>(mapSpritePNG.name);
         System.Globalization.NumberStyles hexNumber;
         hexNumber = System.Globalization.NumberStyles.HexNumber;
 
-        MAP = new int[W, H];
+        MAP_Info = new int[W, H];
 
         for (int i = 0; i < H; i++)
         {
-            tileNums = lines[i].Split(' ');
+            string[] curLine = lines[i].Split(' ');
             for (int j = 0; j < W; j++)
             {
-                if (tileNums[j] == "..")
+                string tileInfo = curLine[j];
+                //Debug.Log("MapInfo: "+ tileInfo);
+                if (tileInfo!="..") 
                 {
-                    MAP[j, i] = 0;
-                }
-                else 
-                {
-                    //这一步，将十六进制转化为16进制的数字，从而对应SPRITES里的sprite的编号
-                    int mapValue = int.Parse(tileNums[j], hexNumber);
-                    //Debug.Log(mapValue);
-                    MAP[j, i] = mapValue;
-                }
+                    //b0 -> 176
+                    int mapInfo = int.Parse(tileInfo, hexNumber);
+                    //Debug.Log("TileNum"+mapInfo);  
+                    MAP_Info[j, i] = mapInfo;
+                }                                
             }
         }
 
-        //Debug.Log("Parse :" + SPRITES.Length + " sprites");
-        //Debug.Log("MapSize: W:" + W + " H:" + H);
+        //Debug.Log("InitMap W: " + W + "H: " + H);
+        //Debug.Log("InitSprites:" + SPRITES.Length);
 
         ShowMap();
     }
 
-    public static int GET_MAP(int x,int y) 
+    static public int Get_Map(int x,int y) 
     {
         if (x<0||x>=W||y<0||y>=H) 
         {
             return -1;
         }
-        return MAP[x, y];
+        int i = MAP_Info[x, y];
+        return MAP_Info[x, y];
     }
 
-    public static int GET_MAP(float x,float y) 
+    static public int Get_Map(float x,float y) 
     {
-        int ex = Mathf.RoundToInt(x);
-        //这里的y-0.25f解释了这个游戏强制透视的原因可以在图块外显示
-        //主角的上半身,并且在该图块上仍然处于控制状态.        
-        int ey = Mathf.RoundToInt(y-0.25f); 
-        if (ex < 0 || ex >= W || ey < 0 || ey >= H)
+        if (x < 0 || x >= W || y < 0 || y >= H)
         {
             return -1;
         }
-        return MAP[ex, ey];
+        int eX = Mathf.RoundToInt(x);
+        int eY = Mathf.RoundToInt(y-0.25f);
+        return MAP_Info[eX, eY];
     }
 
-    public static void Set_MAP(int x,int y,int tileNum) 
+    static public void Set_Map(int x,int y,int tNum = -1) 
     {
         if (x < 0 || x >= W || y < 0 || y >= H)
         {
             return;
         }
-        MAP[x, y] = tileNum;
+        //存储整个地图的信息
+        MAP_Info[x, y] = tNum;
     }
 
     void ShowMap() 
     {
-        TILES = new Tile[W, H];
+        Tiles = new Tile[W, H];
         for (int i = 0; i < H; i++)
         {
             for (int j = 0; j < W; j++)
             {
-                if (MAP[j,i]!=0) 
+                if (MAP_Info[j,i]!=0) 
                 {
-                    
-                    Tile ti = Instantiate<Tile>(tilePrefab);
-                    ti.transform.SetParent(TileAnchor);
-                    ti.SetTile(j, i);
-                    TILES[j, i] = ti;
-                }                
+                    Tile t = Instantiate<Tile>(TilePrefab);
+                    //transform.SetParent比transform.parent效率要高
+                    t.transform.SetParent(tileAnchor);
+                    t.SetTile(j, i);
+                    Tiles[j, i] = t;
+                }              
             }
         }
     }
+
 }

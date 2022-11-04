@@ -2,55 +2,100 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Skeletos : Enemy
+public class Skeletos : Enemy, IFacingMover
 {
-    [Header("Skeletos")]
+    [Header("Set From Skeletos")]
+    public int health;
+    public int thinkMin;
+    public int thinkMax;
+    public int facing;
+    public float thinkOverTime;
+    public Vector2 dir;
     public float speed;
-    public float thinkMin=1;
-    public float thinkMax=4;    
+    public int duplicateCount;
 
-    public int facing = 0;
-    public int facingLastTime;
-    public int facingNum = 0;
+    private KeepInRoom iRm;
+    private int facingNow;
 
-    private float thinkTime;
-    private float thinkOverTime;
-
-    // Start is called before the first frame update
-    void Start()
+    public bool moving 
     {
-        thinkTime = Time.time;
+        get 
+        {
+            return true;
+        }   
     }
 
-    // Update is called once per frame
+    public float gridMult 
+    {
+        get 
+        {
+            return iRm.gridMult;
+        }
+    }
+
+    public Vector2 roomPos
+    {
+        get 
+        {
+            return iRm.roomPos;
+        }
+        set 
+        {
+            iRm.roomPos = value; 
+        }
+    }
+    public Vector2 roomNum 
+    { 
+        get => iRm.roomNum;
+
+        set => iRm.roomNum = value;     
+    }
+
+    protected override void Awake()
+    {
+        iRm = GetComponent<KeepInRoom>();
+        base.Awake();
+    }
     void Update()
     {
-        if (thinkTime<Time.time) 
-        {
-            ChangeDirection();
+        if (Time.time>thinkOverTime) 
+        {   
+            ChangeDir();
         }
-        rigb.velocity = speed * dirs[facing];
+        dir = dirs[facing];
+        rigenemy.velocity = dir * speed;
     }
 
-    void ChangeDirection() 
+    void ChangeDir() 
     {
-        if (facingNum>3) 
+        if (duplicateCount>=2) 
         {
-            facingNum = 0;
+            duplicateCount = 0;
             return;
         }
+        facingNow = facing;
+        thinkOverTime = Random.Range(thinkMin, thinkMax) + Time.time;
 
-        thinkTime = Random.Range(thinkMin, thinkMax) + Time.time;
-        facingLastTime = facing;
         facing = Random.Range(0, dirs.Length);
 
-        if (facingLastTime == facing)
+        if (facingNow == facing) 
         {
-            facingNum++;
+            duplicateCount++;
         }
-        else 
-        {
-            facingNum = 0;
-        }        
+    }
+
+    public int GetFacing()
+    {
+        return facing;
+    }
+
+    public float GetSpeed()
+    {
+        return speed;
+    }
+
+    public Vector2 GetRoomPosOnGrid(float mult = -1)
+    {
+        return iRm.GetRoomPosOnGrid(mult);
     }
 }

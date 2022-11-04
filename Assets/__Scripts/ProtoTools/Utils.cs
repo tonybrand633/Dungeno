@@ -390,9 +390,26 @@ public class Utils : MonoBehaviour {
             return sIn;
         }
         string lineSeparator = ((char) 0x2028).ToString();
+        //Debug.Log(lineSeparator);
+        
         string paragraphSeparator = ((char)0x2029).ToString();
+        //Debug.Log(paragraphSeparator);
 
         return sIn.Replace("\r\n", string.Empty).Replace("\n", string.Empty).Replace("\r", string.Empty).Replace("\f", string.Empty).Replace(lineSeparator, string.Empty).Replace(paragraphSeparator, string.Empty);
+    }
+
+    static public int GetStringCount(string s) 
+    {
+        return s.Length;
+    }
+
+    static public Vector2 multipyRoomNum(Vector2 roomPos,Vector2 roomNum) 
+    {
+        Vector2 vec = roomNum;
+        vec.x *= KeepInRoom.WALL_W;
+        vec.y *= KeepInRoom.WALL_H;
+        vec += roomPos;
+        return vec;
     }
 
 
